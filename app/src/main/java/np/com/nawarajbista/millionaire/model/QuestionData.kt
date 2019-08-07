@@ -1,6 +1,6 @@
 package np.com.nawarajbista.millionaire.model
 
-class QuestionData {
+open class QuestionData {
 
     private val thousandDollar = arrayOf(
         mapOf(

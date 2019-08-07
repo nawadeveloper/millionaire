@@ -9,4 +9,5 @@
     <string name="c_option_three">C. option three</string>
     <string name="d_option_four">D. Option four</string>
     <string name="submit">submit</string>
+    <string name="question_number_1_1000">Question number 1: $1000</string>
 </resources>

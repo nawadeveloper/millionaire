@@ -8,6 +8,17 @@
 
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/TextView_win_message"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/question_number_1_1000"
+        android:textColor="@android:color/black"
+        android:padding="16dp"
+        android:textSize="24sp"/>
+    <TextView
         android:id="@+id/textView_question"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,11 +30,11 @@
         android:text="@string/space_for_question"
         android:textColor="@android:color/black"
         android:textSize="18sp"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintBottom_toTopOf="@id/button_option_one"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@id/TextView_win_message" />
 
     <Button
         android:id="@+id/button_option_one"
