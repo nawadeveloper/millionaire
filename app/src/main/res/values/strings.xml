@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Millionaire</string>
+    <string name="who_want_to_be_millions">Who want to be millions</string>
+    <string name="name">name</string>
+    <string name="start">start</string>
+    <string name="space_for_question">Space for question?</string>
+    <string name="a_option_one">A. option one</string>
+    <string name="b_option_two">B. option two</string>
+    <string name="c_option_three">C. option three</string>
+    <string name="d_option_four">D. Option four</string>
+    <string name="submit">submit</string>
+</resources>
