@@ -1,11 +1,14 @@
 package np.com.nawarajbista.millionaire
 
+import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
+import np.com.nawarajbista.millionaire.databinding.ActivityGameBinding
+import np.com.nawarajbista.millionaire.viewmodel.DataBindingQuestion
 import np.com.nawarajbista.millionaire.viewmodel.GetQuestion
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
@@ -14,10 +17,23 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     private var userAnswer: String? = null
     lateinit var correctAnswer: String
     private var level: Int = 0
+    private lateinit var dataBinding: ActivityGameBinding
+    private lateinit var askedQuestion: DataBindingQuestion
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        askedQuestion = displayQuestion(level)
+
+        dataBinding = DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_game
+        )
+
+        dataBinding.setVariable(BR.question, askedQuestion)
+        dataBinding.executePendingBindings()
+
 
         val userName = intent.getStringExtra(MainActivity.USERNAME)
 
@@ -37,9 +53,11 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
 
 
-    private fun displayQuestion(level: Int) {
+    private fun displayQuestion(level: Int): DataBindingQuestion {
         val data = GetQuestion().getQuestionData(level)
         correctAnswer = data.getValue("optionCorrect")
+        val q = data.getValue("q")
+
         val optionFromData = listOf(
             data.getValue("optionCorrect"),
             data.getValue("option2"),
@@ -49,11 +67,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
         val optionDisplay: List<String> = optionFromData.shuffled()
 
-        textView_question.text = data["q"]
-        button_option_one.text = optionDisplay[0]
-        button_option_two.text = optionDisplay[1]
-        button_option_three.text = optionDisplay[2]
-        button_option_four.text = optionDisplay[3]
+        return DataBindingQuestion(q, optionDisplay)
     }
 
 
@@ -92,7 +106,8 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
                     level += 1
                     if(level < GetQuestion().data.size) {
                         selectAnswer(button_submit) //reset everything for next question
-                        displayQuestion(level)
+                        askedQuestion = displayQuestion(level)
+                        dataBinding.question = askedQuestion
                     }
                     else {
                         Toast.makeText(this, "you became a millionaire", Toast.LENGTH_SHORT).show()
