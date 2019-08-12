@@ -1,5 +1,6 @@
 package np.com.nawarajbista.millionaire
 
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
 import np.com.nawarajbista.millionaire.databinding.ActivityGameBinding
 import np.com.nawarajbista.millionaire.viewmodel.DataBindingQuestion
+import np.com.nawarajbista.millionaire.viewmodel.FinalResult
 import np.com.nawarajbista.millionaire.viewmodel.GetQuestion
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
@@ -19,10 +21,18 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     private var level: Int = 0
     private lateinit var dataBinding: ActivityGameBinding
     private lateinit var askedQuestion: DataBindingQuestion
+    lateinit var userName: String
+    lateinit var dataForNextActivity: FinalResult
+
+    companion object {
+        const val USERNAME = "USER_NAME"
+        const val DATA = "DATA_FOR_INTENT"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
 
         askedQuestion = displayQuestion(level)
 
@@ -35,11 +45,10 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         dataBinding.executePendingBindings()
 
 
-        val userName = intent.getStringExtra(MainActivity.USERNAME)
+        userName = intent.getStringExtra(USERNAME)
 
         supportActionBar?.title = userName
 
-        displayQuestion(level)
 
         button_option_one.setOnClickListener(this)
         button_option_two.setOnClickListener(this)
@@ -49,26 +58,6 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-
-
-
-
-    private fun displayQuestion(level: Int): DataBindingQuestion {
-        val data = GetQuestion().getQuestionData(level)
-        correctAnswer = data.getValue("optionCorrect")
-        val q = data.getValue("q")
-
-        val optionFromData = listOf(
-            data.getValue("optionCorrect"),
-            data.getValue("option2"),
-            data.getValue("option3"),
-            data.getValue("option4")
-        )
-
-        val optionDisplay: List<String> = optionFromData.shuffled()
-
-        return DataBindingQuestion(q, optionDisplay)
-    }
 
 
 
@@ -110,17 +99,47 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
                         dataBinding.question = askedQuestion
                     }
                     else {
-                        Toast.makeText(this, "you became a millionaire", Toast.LENGTH_SHORT).show()
+                        sendDataToNextActivity("Congratulation!!!")
                     }
                 }
                 else {
-                    Toast.makeText(this, "you loose", Toast.LENGTH_SHORT).show()
+                    sendDataToNextActivity("Sorry!!!")
                 }
 
             }
         }
     }
 
+
+    private fun sendDataToNextActivity(message: String) {
+        val win = askedQuestion.win
+        dataForNextActivity = FinalResult(userName, message, win)
+        val intent = Intent(this, YouOwn::class.java)
+        intent.putExtra(DATA, dataForNextActivity)
+        startActivity(intent)
+        finish()
+    }
+
+
+
+
+
+    private fun displayQuestion(level: Int): DataBindingQuestion {
+        val data = GetQuestion().getQuestionData(level)
+        correctAnswer = data.getValue("optionCorrect")
+        val q = data.getValue("q")
+
+        val optionFromData = listOf(
+            data.getValue("optionCorrect"),
+            data.getValue("option2"),
+            data.getValue("option3"),
+            data.getValue("option4")
+        )
+
+        val optionDisplay: List<String> = optionFromData.shuffled()
+
+        return DataBindingQuestion(level, q, optionDisplay)
+    }
 
 
 
