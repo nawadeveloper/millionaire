@@ -4,11 +4,13 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
 import np.com.nawarajbista.millionaire.databinding.ActivityGameBinding
+import np.com.nawarajbista.millionaire.model.DataBindingParcelable
 import np.com.nawarajbista.millionaire.viewmodel.DataBindingQuestion
 import np.com.nawarajbista.millionaire.viewmodel.FinalResult
 import np.com.nawarajbista.millionaire.viewmodel.GetQuestion
@@ -27,6 +29,10 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     companion object {
         const val USERNAME = "USER_NAME"
         const val DATA = "DATA_FOR_INTENT"
+        const val SAVED_INSTANCE = "SAVED_INSTANCE"
+        const val CORRECT_ANSWER = "CORRECT_ANSWER_INSTANCE"
+        const val CURRENT_LEVEL = "CURRENT_LEVEL_OF_GAME"
+        const val SELECTED_OPTION = "CURRENTLY_SELECTED_OPTION"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,15 +40,18 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_game)
 
 
-        askedQuestion = displayQuestion(level)
 
         dataBinding = DataBindingUtil.setContentView(
             this,
             R.layout.activity_game
         )
 
-        dataBinding.setVariable(BR.question, askedQuestion)
-        dataBinding.executePendingBindings()
+        if(savedInstanceState == null) {
+            askedQuestion = displayQuestion(level)
+            Log.d("error", askedQuestion.q)
+            dataBinding.setVariable(BR.question, askedQuestion)
+            dataBinding.executePendingBindings()
+        }
 
 
         userName = intent.getStringExtra(USERNAME)
@@ -58,9 +67,31 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        val correctAns = correctAnswer
+        val currentLevel = level
+        val highlightedOption = selectedOption
+        val saveInstance = DataBindingParcelable(askedQuestion.level, askedQuestion.q, askedQuestion.options)
+        outState?.putParcelable(SAVED_INSTANCE, saveInstance)
+        outState?.putString(CORRECT_ANSWER,correctAns)
+        outState?.putInt(CURRENT_LEVEL, currentLevel)
+        outState?.putInt(SELECTED_OPTION, highlightedOption)
 
+    }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val savedInstance: DataBindingParcelable? = savedInstanceState?.getParcelable(SAVED_INSTANCE)
+        correctAnswer = savedInstanceState?.getString(CORRECT_ANSWER)!!
+        level = savedInstanceState.getInt(CURRENT_LEVEL)
+        selectedOption = savedInstanceState.getInt(SELECTED_OPTION)
 
+        selectPreviouslySelectedOption()
+
+        askedQuestion = DataBindingQuestion(level, savedInstance!!.q, savedInstance.options)
+        dataBinding.question = askedQuestion
+    }
 
 
 
@@ -109,6 +140,24 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+
+
+
+
+    private fun selectPreviouslySelectedOption() {
+        when(selectedOption) {
+            1 -> button_option_one.setBackgroundResource(R.drawable.btn_background_select)
+            2 -> button_option_two.setBackgroundResource(R.drawable.btn_background_select)
+            3 -> button_option_three.setBackgroundResource(R.drawable.btn_background_select)
+            4 -> button_option_four.setBackgroundResource(R.drawable.btn_background_select)
+            else -> return
+        }
+    }
+
+
+
+
 
 
     private fun sendDataToNextActivity(message: String) {
