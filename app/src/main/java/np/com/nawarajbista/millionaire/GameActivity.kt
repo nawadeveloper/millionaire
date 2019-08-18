@@ -2,7 +2,6 @@ package np.com.nawarajbista.millionaire
 
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.media.MediaPlayer
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +12,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
 import np.com.nawarajbista.millionaire.databinding.ActivityGameBinding
 import np.com.nawarajbista.millionaire.model.DataBindingParcelable
-import np.com.nawarajbista.millionaire.viewmodel.ClappingSound
+import np.com.nawarajbista.millionaire.viewmodel.SoundReaction
 import np.com.nawarajbista.millionaire.viewmodel.DataBindingQuestion
 import np.com.nawarajbista.millionaire.viewmodel.FinalResult
 import np.com.nawarajbista.millionaire.viewmodel.GetQuestion
@@ -28,7 +27,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var askedQuestion: DataBindingQuestion
     private lateinit var userName: String
     private lateinit var dataForNextActivity: FinalResult
-    lateinit var clap: ClappingSound
+    private val reaction: SoundReaction = SoundReaction(this)
 
     companion object {
         const val USERNAME = "USER_NAME"
@@ -159,8 +158,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun clappingSoundPlay() {
-        clap = ClappingSound(this)
-        clap.play()
+        reaction.play("clap")
     }
 
 

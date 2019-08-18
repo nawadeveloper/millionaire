@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/name"
         android:layout_margin="16dp"
+        android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/button_start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

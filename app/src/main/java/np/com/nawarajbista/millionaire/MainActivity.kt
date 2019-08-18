@@ -15,11 +15,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val fromData = QuestionData().data
-//        textView_title.text = fromData[1][1]["q"]
-
         button_start.setOnClickListener {
-            var userName = editText_name.text.toString()
+            var userName = editText_name.text.trim().toString()
             if(userName.isEmpty()) {
                 userName = "unknown player"
             }
