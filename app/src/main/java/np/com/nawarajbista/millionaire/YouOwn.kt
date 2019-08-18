@@ -1,10 +1,12 @@
 package np.com.nawarajbista.millionaire
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_you_own.*
 import np.com.nawarajbista.millionaire.GameActivity.Companion.DATA
+import np.com.nawarajbista.millionaire.viewmodel.ClappingSound
 import np.com.nawarajbista.millionaire.viewmodel.FinalResult
 
 class YouOwn : AppCompatActivity() {
@@ -14,6 +16,7 @@ class YouOwn : AppCompatActivity() {
     }
 
     lateinit var userName: String
+    lateinit var clap: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +32,10 @@ class YouOwn : AppCompatActivity() {
         if(receiptData.message == "Congratulation!!!") {
             val message = "$userName became a millionaire."
             textView_win.text = message
+
+            //sound play
+            val clap = ClappingSound(this)
+            clap.play()
         }
         else {
             val message = "$userName only manage to win $${receiptData.win}"

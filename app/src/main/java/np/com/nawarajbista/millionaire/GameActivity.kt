@@ -2,15 +2,18 @@ package np.com.nawarajbista.millionaire
 
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.media.MediaPlayer
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_game.*
 import np.com.nawarajbista.millionaire.databinding.ActivityGameBinding
 import np.com.nawarajbista.millionaire.model.DataBindingParcelable
+import np.com.nawarajbista.millionaire.viewmodel.ClappingSound
 import np.com.nawarajbista.millionaire.viewmodel.DataBindingQuestion
 import np.com.nawarajbista.millionaire.viewmodel.FinalResult
 import np.com.nawarajbista.millionaire.viewmodel.GetQuestion
@@ -23,8 +26,9 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
     private var level: Int = 0
     private lateinit var dataBinding: ActivityGameBinding
     private lateinit var askedQuestion: DataBindingQuestion
-    lateinit var userName: String
-    lateinit var dataForNextActivity: FinalResult
+    private lateinit var userName: String
+    private lateinit var dataForNextActivity: FinalResult
+    lateinit var clap: ClappingSound
 
     companion object {
         const val USERNAME = "USER_NAME"
@@ -127,6 +131,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
                     if(level < GetQuestion().data.size) {
                         selectAnswer(button_submit) //reset everything for next question
                         askedQuestion = displayQuestion(level)
+                        questionChangingAnim()
                         dataBinding.question = askedQuestion
                     }
                     else {
@@ -136,13 +141,27 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
                 else {
                     sendDataToNextActivity("Sorry!!!")
                 }
-
             }
         }
     }
 
+    private fun questionChangingAnim() {
+        val animationOutIn = AnimationUtils.
+            loadAnimation(this, R.anim.fade_out_in)
 
+        textView_question.startAnimation(animationOutIn)
+        button_option_one.startAnimation(animationOutIn)
+        button_option_two.startAnimation(animationOutIn)
+        button_option_three.startAnimation(animationOutIn)
+        button_option_four.startAnimation(animationOutIn)
 
+        clappingSoundPlay()
+    }
+
+    private fun clappingSoundPlay() {
+        clap = ClappingSound(this)
+        clap.play()
+    }
 
 
     private fun selectPreviouslySelectedOption() {
